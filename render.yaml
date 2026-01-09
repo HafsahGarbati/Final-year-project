@@ -56,7 +56,6 @@ services:
   - type: web
     name: campus-wallet-frontend
     runtime: static
-    plan: free
     rootDir: campus-wallet-demo
     buildCommand: npm install && npm run build
     staticPublishPath: dist
