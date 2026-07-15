@@ -1,4 +1,9 @@
-BUK Pay (Intranet-Based Campus Wallet): An offline-capable, local-first digital wallet and ledger system designed for Bayero University Kano (BUK). BUK Pay operates entirely within the university’s Local Area Network (LAN) using a containerized three-tier architecture. This localized network isolation ensures 100% service availability and sub-two-second transaction latencies, completely bypassing the internet connectivity bottlenecks, transaction timeouts, and external bank gateway failures common in developing regions.  🚀 Key FeaturesIntranet-First Architecture: Eliminates dependency on external Internet Service Providers (ISPs). All traffic is securely isolated within the campus LAN.  P2P Microtransactions: Direct peer-to-peer student wallet transfers using unique Student IDs.B2P Scan & Pay: Rapid, contactless merchant payments using dynamically generated, machine-readable QR codes.Pessimistic Database Locking: Employs atomic SQL transactions with row-level locks (lock: t.LOCK.UPDATE) to prevent race conditions and double-spending.Role-Based Dashboards: Distinct, dedicated control portals for Students, Merchants, and Administrators.Admin-Led Fund Disbursement: Auditable central administrative console to load ledger values in exchange for physical currency.🏗️ System ArchitectureBUK Pay utilizes a decoupled Three-Tier Architecture orchestrated via Docker:  Code snippetgraph TD
+BUK Pay (Intranet-Based Campus Wallet): An offline-capable, local-first digital wallet and ledger system designed for Bayero University Kano (BUK). BUK Pay operates entirely within the university’s Local Area Network (LAN) using a containerized three-tier architecture. This localized network isolation ensures 100% service availability and sub-two-second transaction latencies, completely bypassing the internet connectivity bottlenecks, transaction timeouts, and external bank gateway failures common in developing regions.  
+Key Features: 
+Intranet-First Architecture: Eliminates dependency on external Internet Service Providers (ISPs). All traffic is securely isolated within the campus LAN.  
+P2P Microtransactions: Direct peer-to-peer student wallet transfers using unique Student IDs.B2P Scan & Pay: Rapid, contactless merchant payments using dynamically generated, machine-readable QR codes. 
+Pessimistic Database Locking: Employs atomic SQL transactions with row-level locks (lock: t.LOCK.UPDATE) to prevent race conditions and double-spending.Role-Based Dashboards: Distinct, dedicated control portals for Students, Merchants, and Administrators.Admin-Led Fund Disbursement: Auditable central administrative console to load ledger values in exchange for physical currency.
+System Architecture BUK Pay utilizes a decoupled Three-Tier Architecture orchestrated via Docker:  
     subgraph Presentation Tier (Frontend)
         A[React.js Single Page App] -->|Tailwind CSS UI| B(User Browser on LAN)
     end
@@ -9,7 +14,10 @@ BUK Pay (Intranet-Based Campus Wallet): An offline-capable, local-first digital 
     subgraph Data Tier (Database)
         C -->|Sequelize ORM / Atomic Transactions| E[(PostgreSQL Relational DB)]
     end
-Technical StackFrontend: React.js, Tailwind CSS (optimized for lightweight DOM rendering over local networks).  Backend: Node.js, Express.js (asynchronous I/O handling high concurrency).  Database: PostgreSQL (relational storage ensuring strict ACID compliance).  ORM: Sequelize (manages database migrations, models, and pessimistic record locks).Infrastructure: Docker & Docker Compose (containerized microservices for immediate intranet deployment).🔒 Security & Concurrency DesignDouble-Spend Prevention (Atomic Transactions)To ensure absolute ledger integrity under concurrent load, the backend implements database-level transaction isolation. When a transfer is initiated, both the sender and receiver's wallet rows are strictly locked within the postgres registry:JavaScript// From backend/controllers/transactionController.js
+Technical Stack 
+Frontend: React.js, Tailwind CSS (optimized for lightweight DOM rendering over local networks).  Backend: Node.js, Express.js (asynchronous I/O handling high concurrency).  Database: PostgreSQL (relational storage ensuring strict ACID compliance).  ORM: Sequelize (manages database migrations, models, and pessimistic record locks).Infrastructure: Docker & Docker Compose (containerized microservices for immediate intranet deployment).
+Security & Concurrency Design:
+Double-Spend Prevention (Atomic Transactions)To ensure absolute ledger integrity under concurrent load, the backend implements database-level transaction isolation. When a transfer is initiated, both the sender and receiver's wallet rows are strictly locked within the postgres registry:JavaScript// From backend/controllers/transactionController.js
 const senderWallet = await Wallet.findOne({
   where: { userId: req.user.id },
   transaction: t,
@@ -51,7 +59,7 @@ If the sender has insufficient funds or either wallet database state is modified
         string businessName
         string location
     }
-🛠️ Quick Start & Local SetupPrerequisitesDocker & Docker Compose installed.Node.js (v18+ recommended) for local development without cont iners.InstallationClone the Repository:Bashgit clone https://github.com/yourusername/buk-pay.git
+Quick Start & Local SetupPrerequisitesDocker & Docker Compose installed.Node.js (v18+ recommended) for local development without cont iners.InstallationClone the Repository:Bashgit clone https://github.com/yourusername/buk-pay.git
 cd buk-pay
 Configure Environment Variables: Create a .env file in the root backend directory: Code snippetPORT=5000
 DATABASE_URL=postgres://postgres:password@db:5432/bukpay_db
